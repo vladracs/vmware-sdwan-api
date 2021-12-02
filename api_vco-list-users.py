@@ -5,8 +5,7 @@
 
 # Pre-requisites:
 # VMware SD-WAN Orchestrator Target
-#   Enterprise admin account
-#   Enterprise user and user API token
+#   Orchestrator/Partner admin account and API Token
 #
 # Not to be considered as best practices in using VMware VCO API
 # Meant to be used in Lab environments - Please test it and use at your own risk
