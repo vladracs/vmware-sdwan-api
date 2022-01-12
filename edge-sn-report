@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+#
+# Simple Python Script that uses vmware sd-wan orchestrator api read all vmware sd-wan edge serial numbers
+#
+# Not to be considered as best practices in using VMware VCO API
+# Meant to be used in Lab environments - Please test it and use at your own risk
+#
+# please note that VMWare API and Support team - do not guarantee this samples
+# It is provided - AS IS - i.e. while I am glad to answer questions about API usage
+# and behavior generally speaking, VMware/me cannot and do not specifically support these scripts
+#
+# Compatible with api v1 of the vmware sd-wan vco api
+# using tokens to authenticate
+# author: Vladimir F de Sousa vfrancadesou@vmware.com
+
+import os
+import sys
+import requests
+import json
+from copy import deepcopy
+import argparse
+
+########## VCO info and credentials
+token = "Token %s" %(os.environ['VCO_TOKEN'])
+vco_url = 'https://' + os.environ['VCO_HOSTNAME'] + '/portal/rest/'
+headers = {"Content-Type": "application/json", "Authorization": token}
+######## VCO API methods
+get_edge = vco_url + 'edge/getEdge'
+get_enterprise = vco_url + 'enterprise/getEnterprise'
+get_edgelist = vco_url+'enterprise/getEnterpriseEdgeList'
+######## VCO FUNCTIONS
+#### RETRIEVE ENTERPRISE ID for this user
+def find_velo_enterpriseId():
+	#Fetch enterprise id convert to JSON
+	eid=0
+	enterprise = requests.post(get_enterprise, headers=headers, data='')
+	ent_j = enterprise.json()
+	eid=ent_j['id']
+	print('Enterprise Id = %d'%(eid))
+	return eid
+######################### Main Program #####################
+#### MAIN BODY
+######################### Main Program #####################
+def main():
+ eid = find_velo_enterpriseId()
+ params = {'enterpriseId': eid}
+ edgesList = requests.post(get_edgelist, headers=headers, data=json.dumps(params))
+ eList_dict=edgesList.json()
+ length = len(eList_dict)
+ i=0
+ while i < length:
+  EdgeId = eList_dict[i]['id']
+  print ('\n '+eList_dict[i]['name']+' id: '+str(EdgeId)+':')
+  params = {'edgeId': EdgeId}
+  respj = requests.post(get_edge, headers=headers, data=json.dumps(params))
+  resp=respj.json()
+  print("Active Edge SN : "+str(resp['serialNumber'])+"\nStandby Edge SN: "+str(resp['haSerialNumber']))
+  i+=1
+if __name__ == "__main__":
+        main()
