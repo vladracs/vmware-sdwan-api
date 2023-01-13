@@ -2,7 +2,9 @@
 #
 # Simple Python Script for MSP users that leverages vmware sd-wan orchestrator api to read OFC route table of a specfic Customer
 # 
-# usage: python3 api_vco_grab_ofc_routes -e Customer1 -r 500
+# it will save results as a json file and shows the number of subnet found
+#
+# usage: python3 api_vco_grab_ofc_routes -e Customer1 -r 10000
 #
 # Not to be considered as best practices in using VMware VCO API
 # Meant to be used in Lab environments - Please test it and use at your own risk
@@ -91,7 +93,13 @@ def main():
         params = {'filter':{'limit':n_of_routes,'rules':[]},'enterpriseId': eid}
         response = requests.post(get_ofclist, headers=headers, data=json.dumps(params))
         resp_dict=response.json()
-        print(resp_dict["subnets"])
+        outputfile=customer+"routes.json"
+        with open(outputfile, 'w') as outfile:
+         outfile.write(json.dumps(resp_dict["subnets"]))
+        i=0
+        for subnets in resp_dict["subnets"]:
+            i=i+1
+        print("Total number of subnets found is",i)
     else:
         print("No Enteprise ID found")
 if __name__ == '__main__':
