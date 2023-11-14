@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
-# Simple Python Script to dump Edges Configuration
-#
+# Simple Python Script to dump all or 1 (use -ed EdgeName) Edge Configuration
+# 
 # Not to be considered as best practices in using VMware VCO API
 # Meant to be used in Lab environments - Please test it and use at your own risk
 #
@@ -84,10 +84,12 @@ def main():
     parser.add_argument("-o", "--operator", type=str,help="Call API as operator user",required=False)
     parser.add_argument("-p", "--partner", type=str,help="Call API as partner user",required=False)
     parser.add_argument("-e", "--enterprise", type=str,help="Name of Customer",required=True)
+    parser.add_argument("-ed", "--edge", type=str,help="Name of Edge to be dumped",required=False)
     args = parser.parse_args()
     customer=args.enterprise
     partner=args.partner
     operator=args.operator
+    EdgeName=args.edge
     #basic access test to VCO (confirm https to the vco name works - fw rules, dns , etc)
     
     code=urllib.request.urlopen(vco_domain).getcode()
@@ -146,8 +148,8 @@ def main():
         
         json_response=response.json()
         for item in json_response:
-     
-          if 'name' in item:
+          
+          if item['name']==EdgeName:
             EdgeName=item['name']
             EdgeId=item['id']
             
