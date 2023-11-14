@@ -2,8 +2,6 @@
 #
 # Simple Python Script to dump Profiles Configuration
 # 
-# usage: python3 api_vco_grab_ofc_routes -e Customer1 -r 500
-#
 # Not to be considered as best practices in using VMware VCO API
 # Meant to be used in Lab environments - Please test it and use at your own risk
 #
